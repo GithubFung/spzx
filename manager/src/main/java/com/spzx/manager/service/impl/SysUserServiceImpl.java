@@ -1,11 +1,13 @@
 package com.spzx.manager.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.spzx.manager.mapper.SysUserMapper;
-import com.spzx.manager.service.SysUserService;
+import com.spzx.common.exception.GuiguException;
 import com.spzx.commonutil.dto.system.LoginDto;
 import com.spzx.commonutil.entity.system.SysUser;
+import com.spzx.commonutil.vo.common.ResultCodeEnum;
 import com.spzx.commonutil.vo.system.LoginVo;
+import com.spzx.manager.mapper.SysUserMapper;
+import com.spzx.manager.service.SysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -41,7 +43,8 @@ public class SysUserServiceImpl implements SysUserService {
 
         //3、如果根据用户名查不到对应信息，用户不存在，返回错误信息
         if (sysUser == null) {
-            throw new RuntimeException("用户名不存在");
+            /*throw new RuntimeException("用户名不存在");*/
+            throw new GuiguException(ResultCodeEnum.LOGIN_ERROR);
         }
 
         //4、如果根据用户名查询到用户名，用户存在
@@ -52,7 +55,8 @@ public class SysUserServiceImpl implements SysUserService {
 
         //6、如果密码一致，登录成功，否则登录失败
         if (database_password != input_password) {
-            throw new RuntimeException("密码不正确");
+            /*throw new RuntimeException("密码不正确");*/
+            throw new GuiguException(ResultCodeEnum.LOGIN_ERROR);
         }
 
         //7、登录成功，生成用户唯一标识token
