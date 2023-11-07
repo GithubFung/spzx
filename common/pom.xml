@@ -21,7 +21,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
-
+    <!-- 生成图片验证码 -->
     <dependencies>
         <dependency>
             <groupId>cn.hutool</groupId>

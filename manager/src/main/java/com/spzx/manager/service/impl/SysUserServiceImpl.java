@@ -1,5 +1,6 @@
 package com.spzx.manager.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.spzx.common.exception.GuiguException;
 import com.spzx.commonutil.dto.system.LoginDto;
@@ -35,6 +36,14 @@ public class SysUserServiceImpl implements SysUserService {
      */
     @Override
     public LoginVo login(LoginDto loginDto) {
+        //判断验证码是否正确
+        String captcha = loginDto.getCaptcha();
+        String key = loginDto.getCodeKey();
+        String redisCaptcha = redisTemplate.opsForValue().get("user:validate" + key);
+        if (StrUtil.isEmpty(redisCaptcha) || StrUtil.equalsIgnoreCase(redisCaptcha, captcha)) {
+            throw new GuiguException(ResultCodeEnum.VALIDATECODE_ERROR);
+        }
+        redisTemplate.delete("user:validate" + key);
         //1、获取提交的用户名
         String username = loginDto.getUserName();
 
