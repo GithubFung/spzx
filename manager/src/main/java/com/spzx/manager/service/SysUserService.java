@@ -1,6 +1,7 @@
 package com.spzx.manager.service;
 
 import com.spzx.commonutil.dto.system.LoginDto;
+import com.spzx.commonutil.entity.system.SysUser;
 import com.spzx.commonutil.vo.system.LoginVo;
 
 /**
@@ -14,4 +15,8 @@ public interface SysUserService {
      * @return
      */
     LoginVo login(LoginDto loginDto);
+
+    SysUser getUserInfo(String token);
+
+    void logout(String token);
 }

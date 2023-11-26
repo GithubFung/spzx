@@ -1,6 +1,7 @@
 package com.spzx.manager.controller;
 
 import com.spzx.commonutil.dto.system.LoginDto;
+import com.spzx.commonutil.entity.system.SysUser;
 import com.spzx.commonutil.vo.common.Result;
 import com.spzx.commonutil.vo.common.ResultCodeEnum;
 import com.spzx.commonutil.vo.system.LoginVo;
@@ -25,6 +26,31 @@ public class IndexController {
 
     @Autowired
     private ValidateCodeService validateCodeService;
+
+    /**
+     * 用户退出
+     *
+     * @param token
+     * @return
+     */
+    @GetMapping("/logout")
+    public Result logout(@RequestHeader(name = "token") String token) {
+        sysUserService.logout(token);
+        return Result.build(null, ResultCodeEnum.SUCCESS);
+    }
+
+    /**
+     * 获取当前登录用户信息
+     *
+     * @param token
+     * @return
+     */
+    @GetMapping("/getUserInfo")
+    @Operation(summary = "获取当前登录用户信息")
+    public Result getUserInfo(@RequestHeader(name = "token") String token) {
+        SysUser sysUser = sysUserService.getUserInfo(token);
+        return Result.build(sysUser, ResultCodeEnum.SUCCESS);
+    }
 
     /**
      * 用户登录

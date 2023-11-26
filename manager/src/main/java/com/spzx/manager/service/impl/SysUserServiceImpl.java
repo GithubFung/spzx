@@ -25,6 +25,7 @@ public class SysUserServiceImpl implements SysUserService {
 
     @Autowired
     private SysUserMapper sysUserMapper;
+
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
@@ -40,7 +41,7 @@ public class SysUserServiceImpl implements SysUserService {
         String captcha = loginDto.getCaptcha();
         String key = loginDto.getCodeKey();
         String redisCaptcha = redisTemplate.opsForValue().get("user:validate" + key);
-        if (StrUtil.isEmpty(redisCaptcha) || StrUtil.equalsIgnoreCase(redisCaptcha, captcha)) {
+        if (StrUtil.isEmpty(redisCaptcha) || !StrUtil.equalsIgnoreCase(redisCaptcha, captcha)) {
             throw new GuiguException(ResultCodeEnum.VALIDATECODE_ERROR);
         }
         redisTemplate.delete("user:validate" + key);
@@ -63,7 +64,7 @@ public class SysUserServiceImpl implements SysUserService {
         String input_password = DigestUtils.md5DigestAsHex(loginDto.getPassword().getBytes());
 
         //6、如果密码一致，登录成功，否则登录失败
-        if (database_password != input_password) {
+        if (!database_password.equals(input_password)) {
             /*throw new RuntimeException("密码不正确");*/
             throw new GuiguException(ResultCodeEnum.LOGIN_ERROR);
         }
@@ -81,5 +82,22 @@ public class SysUserServiceImpl implements SysUserService {
         LoginVo loginVo = new LoginVo();
         loginVo.setToken(token);
         return loginVo;
+    }
+
+    /**
+     * 获取当前登录用户信息
+     *
+     * @param token
+     */
+    @Override
+    public SysUser getUserInfo(String token) {
+        String userJson = redisTemplate.opsForValue().get("user:login" + token);
+        SysUser sysUser = JSON.parseObject(userJson, SysUser.class);
+        return sysUser;
+    }
+
+    @Override
+    public void logout(String token) {
+        redisTemplate.delete("user:login" + token);
     }
 }

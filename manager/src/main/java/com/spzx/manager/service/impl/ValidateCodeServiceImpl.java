@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 public class ValidateCodeServiceImpl implements ValidateCodeService {
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<String, String> redisTemplate;
 
     /**
      * 生成图片验证码
